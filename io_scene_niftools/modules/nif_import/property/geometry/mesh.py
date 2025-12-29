@@ -69,8 +69,10 @@ class MeshPropertyProcessor:
         b_mesh = b_obj.data
 
         # get all valid properties that are attached to n_block
-        bs_properties = [getattr(n_block, prop_name, None) for prop_name in ("shader_property", "alpha_property")]
-        props = list(prop for prop in itertools.chain(n_block.properties, bs_properties) if prop is not None)
+        bs_properties = [getattr(n_block, prop_name, None)
+                         for prop_name in ("shader_property", "alpha_property")]
+        props = list(prop for prop in itertools.chain(
+            n_block.properties, bs_properties) if prop is not None)
 
         # we need no material if we have no properties
         if not props:
@@ -79,15 +81,17 @@ class MeshPropertyProcessor:
         # just to avoid duped materials, a first pass, make sure a named material is created or retrieved
         for prop in props:
             if prop.name:
-                name = prop.name.decode()
+                name = prop.name
                 b_mat = bpy.data.materials.new(name)
-                NifLog.debug(f"Created material {name} to store properties in {b_mat.name}")
+                NifLog.debug(
+                    f"Created material {name} to store properties in {b_mat.name}")
                 break
         else:
             # bs shaders often have no name, so generate one from mesh name
             name = f"{n_block.name}_nt_mat"
             b_mat = bpy.data.materials.new(name)
-            NifLog.debug(f"Created material {name} to store properties in {b_mat.name}")
+            NifLog.debug(
+                f"Created material {name} to store properties in {b_mat.name}")
 
         # do initial settings for the material here
         self.nodes_wrapper.b_mat = b_mat
